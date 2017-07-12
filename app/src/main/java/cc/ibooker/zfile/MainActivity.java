@@ -74,11 +74,28 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Log1115", sizeFiles + "");
 
         // 转换文件大小（取最大单位）（保留两位小数）
-        String fSize = FileUtil.FormatFileSize(25012);
+        String fSize = FileUtil.formatFileSize(25012);
         Log.d("Log1116", fSize);
 
         // 转换文件大小，指定转换的单位（保留两位小数）
-        double fSize2= FileUtil.FormatFileSize(25012, FileUtil.SIZETYPE_KB);
+        double fSize2= FileUtil.formatFileSize(25012, FileUtil.SIZETYPE_KB);
         Log.d("Log1117", fSize2 + "");
+
+        // 清除本应用内部缓存
+        FileUtil.clearAllCache(this);
+
+        // 获取本应用内部缓存大小（B）
+        long totalCacheSize = FileUtil.getTotalCacheSize(this);
+        Log.d("Log1118", totalCacheSize + "");
+
+        // 获取本应用内部缓存大小（格式化）
+        String formatCacheSize = FileUtil.getFormatTotalCacheSize(this);
+        Log.d("Log1119", formatCacheSize);
+
+        // 清除本应用SharedPreference(/data/data/com.xxx.xxx/sharedprefs)
+        FileUtil.cleanSharedPreference(this);
+
+        // 按名字清除本应用数据库
+        FileUtil.delDatabaseByName(this, "user");
     }
 }

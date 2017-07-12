@@ -280,7 +280,7 @@ public class FileUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return FormatFileSize(blockSize, sizeType);
+        return formatFileSize(blockSize, sizeType);
     }
 
     /**
@@ -301,7 +301,7 @@ public class FileUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return FormatFileSize(blockSize);
+        return formatFileSize(blockSize);
     }
 
     /**
@@ -345,7 +345,7 @@ public class FileUtil {
      *
      * @param fileSize 文件大小
      */
-    public static String FormatFileSize(long fileSize) {
+    public static String formatFileSize(long fileSize) {
         DecimalFormat df = new DecimalFormat("#.00");
         String fileSizeStr;
         String wrongSize = "0B";
@@ -370,7 +370,7 @@ public class FileUtil {
      * @param fileSize 文件大小
      * @param sizeType 文件大小单位
      */
-    public static double FormatFileSize(long fileSize, int sizeType) {
+    public static double formatFileSize(long fileSize, int sizeType) {
         DecimalFormat df = new DecimalFormat("#.00");
         double fileSizeLong = 0;
         switch (sizeType) {
@@ -390,5 +390,63 @@ public class FileUtil {
                 break;
         }
         return fileSizeLong;
+    }
+
+    /**
+     * 获取本应用内部缓存大小（B）
+     *
+     * @param context 上下文对象
+     */
+    public static long getTotalCacheSize(Context context) {
+        long cacheSize = getFileSizes(context.getCacheDir());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            cacheSize += getFileSizes(context.getExternalCacheDir());
+        }
+        return cacheSize;
+    }
+
+    /**
+     * 获取本应用内部缓存大小（格式化）
+     *
+     * @param context 上下文对象
+     */
+    public static String getFormatTotalCacheSize(Context context) {
+        long cacheSize = getFileSizes(context.getCacheDir());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            cacheSize += getFileSizes(context.getExternalCacheDir());
+        }
+        return formatFileSize(cacheSize);
+    }
+
+    /**
+     * 清除本应用内部缓存
+     *
+     * @param context 上下文对象
+     */
+    public static void clearAllCache(Context context) {
+        FileUtil.deleteDir(context.getCacheDir().getAbsolutePath());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            if (context.getExternalCacheDir() != null)
+                FileUtil.deleteDir(context.getExternalCacheDir().getAbsolutePath());
+        }
+    }
+
+    /**
+     * 清除本应用SharedPreference(/data/data/com.xxx.xxx/sharedprefs)
+     *
+     * @param context 上下文对象
+     */
+    public static void cleanSharedPreference(Context context) {
+        FileUtil.deleteDir(new File(File.separator + "data" + File.separator + "data" + File.separator + context.getPackageName() + File.separator + "sharedprefs").getAbsolutePath());
+    }
+
+    /**
+     * 按名字清除本应用数据库
+     *
+     * @param context 上下文对象
+     * @param dbName  数据库名
+     */
+    public static void delDatabaseByName(Context context, String dbName) {
+        context.deleteDatabase(dbName);
     }
 }
