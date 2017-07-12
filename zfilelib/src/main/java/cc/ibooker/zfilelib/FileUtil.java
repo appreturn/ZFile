@@ -118,19 +118,23 @@ public class FileUtil {
      * @param path 完整文件路径
      */
     public static boolean deleteDir(String path) {
-        File dir = new File(path);
-        if (!dir.exists() || !dir.isDirectory())
-            return false;
-        for (File file : dir.listFiles()) {
-            if (file != null) {
-                if (file.isFile()) {// 删除所有文件
-                    if (!file.delete()) return false;
-                } else if (file.isDirectory()) {// 递规的方式删除文件夹
-                    deleteDir(file.getAbsolutePath());
+        try {
+            File dir = new File(path);
+            if (!dir.exists() || !dir.isDirectory())
+                return false;
+            for (File file : dir.listFiles()) {
+                if (file != null) {
+                    if (file.isFile()) {// 删除所有文件
+                        if (!file.delete()) return false;
+                    } else if (file.isDirectory()) {// 递规的方式删除文件夹
+                        deleteDir(file.getAbsolutePath());
+                    }
                 }
             }
+            return dir.delete();// 删除目录本身
+        } catch (Exception e) {
+            return false;
         }
-        return dir.delete();// 删除目录本身
     }
 
     /**
@@ -352,22 +356,26 @@ public class FileUtil {
      * @param fileSize 文件大小
      */
     public static String formatFileSize(long fileSize) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeStr;
-        String wrongSize = "0B";
-        if (fileSize == 0) {
-            return wrongSize;
+        try {
+            DecimalFormat df = new DecimalFormat("#.00");
+            String fileSizeStr;
+            String wrongSize = "0B";
+            if (fileSize == 0) {
+                return wrongSize;
+            }
+            if (fileSize < 1024) {
+                fileSizeStr = df.format((double) fileSize) + "B";
+            } else if (fileSize < 1048576) {
+                fileSizeStr = df.format((double) fileSize / 1024) + "KB";
+            } else if (fileSize < 1073741824) {
+                fileSizeStr = df.format((double) fileSize / 1048576) + "MB";
+            } else {
+                fileSizeStr = df.format((double) fileSize / 1073741824) + "GB";
+            }
+            return fileSizeStr;
+        } catch (Exception e) {
+            return null;
         }
-        if (fileSize < 1024) {
-            fileSizeStr = df.format((double) fileSize) + "B";
-        } else if (fileSize < 1048576) {
-            fileSizeStr = df.format((double) fileSize / 1024) + "KB";
-        } else if (fileSize < 1073741824) {
-            fileSizeStr = df.format((double) fileSize / 1048576) + "MB";
-        } else {
-            fileSizeStr = df.format((double) fileSize / 1073741824) + "GB";
-        }
-        return fileSizeStr;
     }
 
     /**
@@ -377,25 +385,29 @@ public class FileUtil {
      * @param sizeType 文件大小单位
      */
     public static double formatFileSize(long fileSize, int sizeType) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        double fileSizeLong = 0;
-        switch (sizeType) {
-            case SIZETYPE_B:
-                fileSizeLong = Double.valueOf(df.format((double) fileSize));
-                break;
-            case SIZETYPE_KB:
-                fileSizeLong = Double.valueOf(df.format((double) fileSize / 1024));
-                break;
-            case SIZETYPE_MB:
-                fileSizeLong = Double.valueOf(df.format((double) fileSize / 1048576));
-                break;
-            case SIZETYPE_GB:
-                fileSizeLong = Double.valueOf(df.format((double) fileSize / 1073741824));
-                break;
-            default:
-                break;
+        try {
+            DecimalFormat df = new DecimalFormat("#.00");
+            double fileSizeLong = 0;
+            switch (sizeType) {
+                case SIZETYPE_B:
+                    fileSizeLong = Double.valueOf(df.format((double) fileSize));
+                    break;
+                case SIZETYPE_KB:
+                    fileSizeLong = Double.valueOf(df.format((double) fileSize / 1024));
+                    break;
+                case SIZETYPE_MB:
+                    fileSizeLong = Double.valueOf(df.format((double) fileSize / 1048576));
+                    break;
+                case SIZETYPE_GB:
+                    fileSizeLong = Double.valueOf(df.format((double) fileSize / 1073741824));
+                    break;
+                default:
+                    break;
+            }
+            return fileSizeLong;
+        } catch (Exception e) {
+            return 0;
         }
-        return fileSizeLong;
     }
 
     /**
