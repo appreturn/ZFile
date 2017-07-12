@@ -329,13 +329,19 @@ public class FileUtil {
      */
     public static long getFileSizes(File files) {
         long size = 0;
-        File fList[] = files.listFiles();
-        for (File file : fList) {
-            if (file.isDirectory()) {
-                size = size + getFileSizes(file);
-            } else {
-                size = size + getFileSize(file);
+        try {
+            if (files.exists()) {
+                File fList[] = files.listFiles();
+                for (File file : fList) {
+                    if (file.isDirectory()) {
+                        size = size + getFileSizes(file);
+                    } else {
+                        size = size + getFileSize(file);
+                    }
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return size;
     }
@@ -398,9 +404,14 @@ public class FileUtil {
      * @param context 上下文对象
      */
     public static long getTotalCacheSize(Context context) {
-        long cacheSize = getFileSizes(context.getCacheDir());
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            cacheSize += getFileSizes(context.getExternalCacheDir());
+        long cacheSize = 0;
+        try {
+            cacheSize = getFileSizes(context.getCacheDir());
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                cacheSize += getFileSizes(context.getExternalCacheDir());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return cacheSize;
     }
@@ -411,11 +422,15 @@ public class FileUtil {
      * @param context 上下文对象
      */
     public static String getFormatTotalCacheSize(Context context) {
-        long cacheSize = getFileSizes(context.getCacheDir());
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            cacheSize += getFileSizes(context.getExternalCacheDir());
+        try {
+            long cacheSize = getFileSizes(context.getCacheDir());
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                cacheSize += getFileSizes(context.getExternalCacheDir());
+            }
+            return formatFileSize(cacheSize);
+        } catch (Exception e) {
+            return null;
         }
-        return formatFileSize(cacheSize);
     }
 
     /**
@@ -424,10 +439,14 @@ public class FileUtil {
      * @param context 上下文对象
      */
     public static void clearAllCache(Context context) {
-        FileUtil.deleteDir(context.getCacheDir().getAbsolutePath());
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            if (context.getExternalCacheDir() != null)
-                FileUtil.deleteDir(context.getExternalCacheDir().getAbsolutePath());
+        try {
+            FileUtil.deleteDir(context.getCacheDir().getAbsolutePath());
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                if (context.getExternalCacheDir() != null)
+                    FileUtil.deleteDir(context.getExternalCacheDir().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
