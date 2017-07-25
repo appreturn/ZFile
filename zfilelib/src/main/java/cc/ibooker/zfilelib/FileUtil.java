@@ -273,13 +273,15 @@ public class FileUtil {
      * @return double值的大小
      */
     public static double getFileOrFilesSize(String filePath, int sizeType) {
-        File file = new File(filePath);
         long blockSize = 0;
         try {
-            if (file.isDirectory()) {
-                blockSize = getFileSizes(file);
-            } else {
-                blockSize = getFileSize(file);
+            File file = new File(filePath);
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    blockSize = getFileSizes(file);
+                } else {
+                    blockSize = getFileSize(file);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -294,13 +296,15 @@ public class FileUtil {
      * @return 计算好的带B、KB、MB、GB的字符串
      */
     public static String getAutoFileOrFilesSize(String filePath) {
-        File file = new File(filePath);
         long blockSize = 0;
         try {
-            if (file.isDirectory()) {
-                blockSize = getFileSizes(file);
-            } else {
-                blockSize = getFileSize(file);
+            File file = new File(filePath);
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    blockSize = getFileSizes(file);
+                } else {
+                    blockSize = getFileSize(file);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -356,14 +360,12 @@ public class FileUtil {
      * @param fileSize 文件大小
      */
     public static String formatFileSize(long fileSize) {
+        String fileSizeStr = null;
         try {
             DecimalFormat df = new DecimalFormat("#.00");
-            String fileSizeStr;
-            String wrongSize = "0B";
-            if (fileSize == 0) {
-                return wrongSize;
-            }
-            if (fileSize < 1024) {
+            if (fileSize <= 0) {
+                fileSizeStr = "0B";
+            } else if (fileSize < 1024) {
                 fileSizeStr = df.format((double) fileSize) + "B";
             } else if (fileSize < 1048576) {
                 fileSizeStr = df.format((double) fileSize / 1024) + "KB";
@@ -372,10 +374,10 @@ public class FileUtil {
             } else {
                 fileSizeStr = df.format((double) fileSize / 1073741824) + "GB";
             }
-            return fileSizeStr;
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
         }
+        return fileSizeStr;
     }
 
     /**
