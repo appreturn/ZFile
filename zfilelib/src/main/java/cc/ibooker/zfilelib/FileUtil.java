@@ -454,10 +454,10 @@ public class FileUtil {
      */
     public static void clearAllCache(Context context) {
         try {
-            FileUtil.deleteDir(context.getCacheDir().getAbsolutePath());
+            deleteDir(context.getCacheDir().getAbsolutePath());
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 if (context.getExternalCacheDir() != null)
-                    FileUtil.deleteDir(context.getExternalCacheDir().getAbsolutePath());
+                    deleteDir(context.getExternalCacheDir().getAbsolutePath());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -470,7 +470,7 @@ public class FileUtil {
      * @param context 上下文对象
      */
     public static void cleanSharedPreference(Context context) {
-        FileUtil.deleteDir(new File(File.separator + "data" + File.separator + "data" + File.separator + context.getPackageName() + File.separator + "sharedprefs").getAbsolutePath());
+        deleteDir(new File(File.separator + "data" + File.separator + "data" + File.separator + context.getPackageName() + File.separator + "sharedprefs").getAbsolutePath());
     }
 
     /**
