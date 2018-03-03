@@ -2,100 +2,86 @@ package cc.ibooker.zfile;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 
+import cc.ibooker.zfilelib.FileInfoBean;
 import cc.ibooker.zfilelib.FileUtil;
 
+/**
+ * 获取存储目录，并实现单击打开文件，长按删除文件功能
+ *
+ * @author 邹峰立
+ */
 public class MainActivity extends AppCompatActivity {
+    private ListView listView;
+    private FileInfoAdapter adapter;
+    private ArrayList<FileInfoData> mDatas = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 创建单目录
-        String filePath1 = FileUtil.SDPATH + File.separator + "imageFile";
-        FileUtil.createSDDir(filePath1);
+        listView = findViewById(R.id.listview);
+        // 单击打开文件
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < mDatas.size()) {
+                    // 打开文件
+                    FileUtil.openFile(MainActivity.this, new File(mDatas.get(position).getPath()));
+                }
+            }
+        });
+        // 长按删除文件
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < mDatas.size()) {
+                    File file = new File(mDatas.get(position).getPath());
+                    if (file.exists()) {
+                        boolean bool;
+                        if (file.isDirectory())// 删除目录
+                            bool = FileUtil.deleteDir(mDatas.get(position).getPath());
+                        else// 删除文件
+                            bool = FileUtil.delFile(mDatas.get(position).getPath());
+                        if (bool) {// 刷新界面
+                            Toast.makeText(MainActivity.this, "删除文件成功", Toast.LENGTH_SHORT).show();
+                            mDatas.remove(position);
+                            setAdapter();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "待删除文件找不到", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return true;
+            }
+        });
 
-        // 创建多目录
-        String filePath2 = FileUtil.SDPATH + File.separator + "ZFileDemo" + File.separator + "Cache";
-        FileUtil.createSDDirs(filePath2);
-
-        // 创建文件-根据当前年月日时分秒（时间戳）生成
-        File file1 = FileUtil.createTimeMillisFile();
-
-        // 创建文件-根据文件名生成
-        File file2 = FileUtil.createNameFile("test1.txt");
-
-        // 删除文件
-        if (file1 != null)
-            FileUtil.delFile(file1.getAbsolutePath());
-
-        // 删除文件夹（目录），以及内部所有文件
-        FileUtil.deleteDir(filePath2);
-
-        // 读取文件
-        String str = FileUtil.readFile(this, "test");
-        Log.d("test", str);
-
-        // 写入文件
-        FileUtil.writeFile(this, "123456789", "test", MODE_PRIVATE);
-
-        // 复制单个文件（复制文件内容）
-        File file3 = FileUtil.createNameFile("ZFileDemo" + File.separator + "test2.txt");
-        if (file2 != null && file3 != null)
-            FileUtil.copyFile(file2.getAbsolutePath(), file3.getAbsolutePath());
-
-        // 复制整个文件夹内容
-        FileUtil.copyFolder(filePath1, filePath2);
-
-        // 判断文件/目录是否存在
-        boolean isExists = FileUtil.isFileExist(filePath1);
-        Log.d("Log111", isExists + "");
-
-        // 获取文件/文件夹的指定单位的大小
-        double fileSize = FileUtil.getFileOrFilesSize(filePath1, FileUtil.SIZETYPE_B);
-        Log.d("Log1112", fileSize + "");
-
-        // 调用此方法自动计算文件/文件夹的大小
-        String sizeStr = FileUtil.getAutoFileOrFilesSize(filePath1);
-        Log.d("Log1113", sizeStr);
-
-        // 获取指定文件大小（B）
-        if (file2 != null) {
-            long sizeFile = FileUtil.getFileSize(file2);
-            Log.d("Log1114", sizeFile + "");
+        // 获取数据
+        ArrayList<FileInfoBean> fileInfoBeans = FileUtil.getFileInfos(FileUtil.SDPATH);
+        for (FileInfoBean fileInfoBean : fileInfoBeans) {
+            mDatas.add(new FileInfoData(fileInfoBean.getFileName(), fileInfoBean.getFilePath(), R.mipmap.ic_launcher));
         }
 
-        // 获取指定文件夹大小（B）
-        long sizeFiles = FileUtil.getFileSizes(new File(filePath1));
-        Log.d("Log1115", sizeFiles + "");
+        // 刷新界面
+        setAdapter();
 
-        // 转换文件大小（取最大单位）（保留两位小数）
-        String fSize = FileUtil.formatFileSize(25012);
-        Log.d("Log1116", fSize);
+    }
 
-        // 转换文件大小，指定转换的单位（保留两位小数）
-        double fSize2= FileUtil.formatFileSize(25012, FileUtil.SIZETYPE_KB);
-        Log.d("Log1117", fSize2 + "");
-
-        // 清除本应用内部缓存
-        FileUtil.clearAllCache(this);
-
-        // 获取本应用内部缓存大小（B）
-        long totalCacheSize = FileUtil.getTotalCacheSize(this);
-        Log.d("Log1118", totalCacheSize + "");
-
-        // 获取本应用内部缓存大小（格式化）
-        String formatCacheSize = FileUtil.getFormatTotalCacheSize(this);
-        Log.d("Log1119", formatCacheSize);
-
-        // 清除本应用SharedPreference(/data/data/com.xxx.xxx/sharedprefs)
-        FileUtil.cleanSharedPreference(this);
-
-        // 按名字清除本应用数据库
-        FileUtil.delDatabaseByName(this, "user");
+    // 自定义setAdapter
+    private void setAdapter() {
+        if (adapter == null) {
+            adapter = new FileInfoAdapter(this, mDatas);
+            listView.setAdapter(adapter);
+        } else {
+            adapter.reflahsData(mDatas);
+        }
     }
 }
