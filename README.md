@@ -1,8 +1,40 @@
 # ZFile
 Android文件管理类，包括打开不同后缀文件，创建文件/目录，获取文件/目录大小，复制文件，读取写入文件等。注意：需要添加三个权限 WRITE_EXTERNAL_STORAGE、READ_EXTERNAL_STORAGE、MOUNT_UNMOUNT_FILESYSTEMS。
 
+引入资源，两种方式：
+
+1、在build.gradle文件中添加以下代码：
 ```
-/**
+allprojects {
+	repositories {
+		maven { url 'https://www.jitpack.io' }
+	}
+}
+```
+```
+dependencies {
+	compile 'com.github.zrunker:ZFile:v1.0.4'
+}
+```
+2、使用maven，添加以下代码：
+```
+<repositories>
+	<repository>
+		<id>jitpack.io</id>
+		<url>https://jitpack.io</url>
+	</repository>
+</repositories>
+```
+```
+<dependency>
+	<groupId>com.github.zrunker</groupId>
+	<artifactId>ZFile</artifactId>
+	<version>v1.0.4</version>
+</dependency>
+```
+用法：需要添加三个权限 WRITE_EXTERNAL_STORAGE、READ_EXTERNAL_STORAGE、MOUNT_UNMOUNT_FILESYSTEMS。
+```
+ /**
  * FileLib测试
  *
  * @author 邹峰立
