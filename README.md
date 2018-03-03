@@ -1,6 +1,7 @@
 # ZFile
 Android文件管理类，包括打开不同后缀文件，创建文件/目录，获取文件/目录大小，复制文件，读取写入文件等。注意：需要添加三个权限 WRITE_EXTERNAL_STORAGE、READ_EXTERNAL_STORAGE、MOUNT_UNMOUNT_FILESYSTEMS。
 
+```
 /**
  * FileLib测试
  *
@@ -104,3 +105,4 @@ public class FileLibTestActivity extends AppCompatActivity {
         FileUtil.openFile(this, file1);
     }
 }
+```
