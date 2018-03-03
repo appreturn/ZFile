@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 
+import cc.ibooker.zfilelib.FileInfoBean;
 import cc.ibooker.zfilelib.FileUtil;
 
 /**
@@ -102,5 +104,12 @@ public class FileLibTestActivity extends AppCompatActivity {
 
         // 按名字清除本应用数据库
         FileUtil.delDatabaseByName(this, "user");
+
+        // 获取文件目录信息
+        ArrayList<FileInfoBean> fileInfoBeans = FileUtil.getFileInfos(FileUtil.SDPATH);
+        Log.d("Log11110", fileInfoBeans.toString());
+
+        // 打开文件
+        FileUtil.openFile(this, file1);
     }
 }
