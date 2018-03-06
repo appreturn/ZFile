@@ -1,41 +1,52 @@
 # ZFile
 Android文件管理类，包括打开不同后缀文件，创建文件/目录，获取文件/目录大小，复制文件，读取写入文件等。注意：需要添加三个权限 WRITE_EXTERNAL_STORAGE、READ_EXTERNAL_STORAGE、MOUNT_UNMOUNT_FILESYSTEMS。
 
-引入资源，两种方式：
+>作者：邹峰立，微博：zrunker，邮箱：zrunker@yahoo.com，微信公众号：书客创作，个人平台：[www.ibooker.cc](http://www.ibooker.cc)。
+
+>本文选自[书客创作](http://www.ibooker.cc)平台第20篇文章。[阅读原文](http://www.ibooker.cc/article/20/detail) 。
+
+![书客创作](http://upload-images.jianshu.io/upload_images/3480018-1520d3ac35e85645..jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在实际开发当中，对文件的管理是非常常见的一个功能，这里给出一个关于文件处理的一些常用方法的封装类ZFile，为了开发方便，可以直接引入封装内容到自己的项目当中，那么该如何引用呢？
+
+**一、引入资源包**
+
+这里提供两种方式引入资源：
 
 1、在build.gradle文件中添加以下代码：
 ```
+在build.gradle文件中添加以下代码：
 allprojects {
-	repositories {
-		maven { url 'https://www.jitpack.io' }
-	}
+   repositories {
+      maven { url 'https://www.jitpack.io' }
+   }
 }
-```
-```
 dependencies {
-	compile 'com.github.zrunker:ZFile:v1.0.4'
+   compile'com.github.zrunker:ZFile:v1.0.4'
 }
 ```
 2、使用maven，添加以下代码：
 ```
 <repositories>
-	<repository>
-		<id>jitpack.io</id>
-		<url>https://jitpack.io</url>
-	</repository>
+   <repository>
+      <id>jitpack.io</id>﻿
+      <url>https://jitpack.io</url>﻿
+   </repository>
 </repositories>
 ```
 ```
 <dependency>
-	<groupId>com.github.zrunker</groupId>
-	<artifactId>ZFile</artifactId>
-	<version>v1.0.4</version>
+   <groupId>com.github.zrunker﻿﻿﻿</groupId>
+   <artifactId>ZFile</artifactId>
+   <version>v1.0.4﻿</version>
 </dependency>
 ```
-用法：需要添加三个权限 WRITE_EXTERNAL_STORAGE、READ_EXTERNAL_STORAGE、MOUNT_UNMOUNT_FILESYSTEMS。
+**二、使用ZFile**
+
+应用添加资源后，就可以直接使用ZFile类进行文件处理工作。例如：
 ```
  /**
- * FileLib测试
+ * 使用ZFile
  *
  * @author 邹峰立
  */
@@ -138,3 +149,19 @@ public class FileLibTestActivity extends AppCompatActivity {
     }
 }
 ```
+
+注：Android中操作文件，需要在清单文件AndroidManifest.xml加入相应的权限，如果是在Android6.0+版本中需要动态添加权限：
+```
+<!--用于写入数据到扩展存储卡(SD)-->
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<!-- 往sdcard中读取数据的权限 -->
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<!-- 在sdcard中创建/删除文件的权限 -->
+<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+```
+
+[GitHub地址](https://github.com/zrunker/ZFile/)
+[阅读原文](http://www.ibooker.cc/article/20/detail) 
+
+----------
+![微信公众号：书客创作](http://upload-images.jianshu.io/upload_images/3480018-2f98a0f3950cea7d..jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
